@@ -19,7 +19,7 @@
         const uluru = { lat: 32.0489407, lng: 34.765728 };
         const uluru1 = { lat: 32.0575488, lng: 34.7677758 };
         const uluru2 = { lat: 32.059789, lng: 34.766853 };
-        const uluru3 = { lat: 32.059789, lng: 34.766853 };
+        const uluru3 = { lat: 32.0613956, lng: 34.7665389 };
         // The map, centered at Uluru
         const map = new google.maps.Map(document.getElementById("map"), {
           zoom: 15,
@@ -43,11 +43,51 @@
       })(marker));
 
 
-        const marker1 = new google.maps.Marker({
+
+      const marker1 = new google.maps.Marker({
           position: uluru1,
           map: map,
         });
-      }
+
+        google.maps.event.addListener(marker1, 'click',
+        (function(marker1) {
+        return function() {
+          infowindow.setContent('test2');
+          infowindow.open(map, marker1);
+        }
+      })(marker1));
+
+
+    
+      const marker2 = new google.maps.Marker({
+          position: uluru2,
+          map: map,
+        });
+
+        google.maps.event.addListener(marker2, 'click',
+        (function(marker2) {
+        return function() {
+          infowindow.setContent('test22');
+          infowindow.open(map, marker2);
+        }
+      })(marker2));
+      
+
+      const marker3 = new google.maps.Marker({
+          position: uluru3,
+          map: map,
+        });
+
+        google.maps.event.addListener(marker3, 'click',
+        (function(marker3) {
+        return function() {
+          infowindow.setContent('test3');
+          infowindow.open(map, marker3);
+        }
+      })(marker3));
+      
+    }
+
     </script>
   </head>
   <body>
