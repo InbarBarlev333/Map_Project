@@ -16,15 +16,35 @@
       // Initialize and add the map
       function initMap() {
         // The location of Uluru
-        const uluru = { lat: -25.344, lng: 131.036 };
+        const uluru = { lat: 32.0489407, lng: 34.765728 };
+        const uluru1 = { lat: 32.0575488, lng: 34.7677758 };
+        const uluru2 = { lat: 32.059789, lng: 34.766853 };
+        const uluru3 = { lat: 32.059789, lng: 34.766853 };
         // The map, centered at Uluru
         const map = new google.maps.Map(document.getElementById("map"), {
-          zoom: 4,
+          zoom: 15,
           center: uluru,
         });
         // The marker, positioned at Uluru
         const marker = new google.maps.Marker({
           position: uluru,
+          map: map,
+        });
+
+        var infowindow = new google.maps.InfoWindow();
+
+
+        google.maps.event.addListener(marker, 'click',
+        (function(marker) {
+        return function() {
+          infowindow.setContent('test');
+          infowindow.open(map, marker);
+        }
+      })(marker));
+
+
+        const marker1 = new google.maps.Marker({
+          position: uluru1,
           map: map,
         });
       }
@@ -37,7 +57,7 @@
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap&libraries=&v=weekly"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQK4PcNKZtRDbOuNCJuR3X47xgMQvBrpQ&callback=initMap&libraries=&v=weekly"
       async
     ></script>
   </body>
