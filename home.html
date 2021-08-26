@@ -1,0 +1,178 @@
+<button onclick="myFunction()">הוסף נקודה על מפה</button>
+
+
+<p id="demo"></p>
+
+<script>
+function myFunction() {
+    document.getElementById("addMarker").hidden = !document.getElementById("addMarker").hidden;
+ 
+}
+
+</script>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add Map</title>
+
+    <style type="text/css">
+      /* Set the size of the div element that contains the map */
+      #map {
+        height: 400px;
+        /* The height is 400 pixels */
+        width: 100%;
+        /* The width is the width of the web page */
+      }
+    </style>
+    <script>
+      var map;
+      var fs = require('fs');
+      var infowindow = new google.maps.InfoWindow();
+      var markers;
+      // Initialize and add the map
+      function initMap() {
+          readFile();
+        // The location of Uluru
+        const uluru = { lat: 32.0489407, lng: 34.765728 };
+        const uluru1 = { lat: 32.0575488, lng: 34.7677758 };
+        const uluru2 = { lat: 32.059789, lng: 34.766853 };
+        const uluru3 = { lat: 32.0613956, lng: 34.7665389 };
+        // The map, centered at Uluru
+        map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 15,
+          center: uluru,
+        });
+        // The marker, positioned at Uluru
+        const marker = new google.maps.Marker({
+          position: uluru,
+          map: map,
+        });
+
+        
+
+
+        google.maps.event.addListener(marker, 'click',
+        (function(marker) {
+        return function() {
+          infowindow.setContent('test');
+          infowindow.open(map, marker);
+        }
+      })(marker));
+
+
+
+      const marker1 = new google.maps.Marker({
+          position: uluru1,
+          map: map,
+        });
+
+        google.maps.event.addListener(marker1, 'click',
+        (function(marker1) {
+        return function() {
+          infowindow.setContent('test2');
+          infowindow.open(map, marker1);
+        }
+      })(marker1));
+
+
+    
+      const marker2 = new google.maps.Marker({
+          position: uluru2,
+          map: map,
+        });
+
+        google.maps.event.addListener(marker2, 'click',
+        (function(marker2) {
+        return function() {
+          infowindow.setContent('test22');
+          infowindow.open(map, marker2);
+        }
+      })(marker2));
+      
+
+      const marker3 = new google.maps.Marker({
+          position: uluru3,
+          map: map,
+        });
+
+        google.maps.event.addListener(marker3, 'click',
+        (function(marker3) {
+        return function() {
+          infowindow.setContent('test3');
+          infowindow.open(map, marker3);
+        }
+      })(marker3));
+      
+    }
+
+    function addToList(disk, tel, lat, lng) {
+        console.log(typeof lat)
+        console.log(typeof lng)
+        infowindow = new google.maps.InfoWindow();
+        //const Uluru = { lat: 32.0686992, lng: 34.7751479 };
+        const Uluru = { lat: Number(lat), lng: Number(lng) };
+        const marker = new google.maps.Marker({
+          position: Uluru,
+          map: map,
+
+        });
+
+        google.maps.event.addListener(marker, 'click',
+        (function(marker) {
+        return function() {
+          infowindow.setContent("שם: " + disk + "\n" + "טלפון: "+tel);
+          infowindow.open(map, marker);
+        }
+      })(marker));
+      document.getElementById("addMarker").hidden = !document.getElementById("addMarker").hidden;
+    }
+    function readFile(){
+        var fs = require('fs');
+        fs.readFile('database.json', 'utf8', function readFileCallback(err, data){
+    if (err){
+        console.log(err);
+    } else {
+        debugger;
+    markers = JSON.parse(data);
+    
+    //now it an object
+    //obj.table.push({id: 2, square:3}); //add some data
+    //json = JSON.stringify(obj); //convert it back to json
+    //fs.writeFile('myjsonfile.json', json, 'utf8', callback); // write it back 
+}});
+    }
+
+    </script>
+  </head>
+  <body>
+    <h3>My Google Maps Demo</h3>
+    <!--The div element for the map -->
+    <div id="map"></div>
+    
+    <div id="addMarker">
+        <p>Add Marker</p>
+        <label for="discription">שם מלא</label>
+        <input id="discription" type="text">
+        <br/>
+        <br/>
+        <label for="phone">טלפון</label>
+        <input id="phone" type="tel">
+        <br/>
+        <br/>
+        <label for="lat">lat</label>
+        <input id="lat" type="number">
+        <label for="lng">lng</label>
+        <input id="lng" type="number">
+        <br/>
+        <br/>
+        <button onclick="addToList(document.getElementById('discription').value, document.getElementById('phone').value,document.getElementById('lat').value, document.getElementById('lng').value )">הרשם</button>
+    </div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQK4PcNKZtRDbOuNCJuR3X47xgMQvBrpQ&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+  </body>
+</html>
