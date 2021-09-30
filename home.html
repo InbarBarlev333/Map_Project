@@ -25,6 +25,29 @@
             width: 100%;
             /* The width is the width of the web page */
         }
+        label {
+            background-color: blue; 
+            font-family: Arial;
+            font-weight: bold;
+            color:cornsilk;
+
+        }
+        #addMarker {
+            width: 50%;
+            margin: 0 auto;
+            background-color: pink;
+
+        }
+        #addToLIstBotten {
+            width: 100%;
+            margin: 0 auto;
+        }
+        body{
+            background-color: green;  
+        }
+        h3{
+            text-align: center;
+        }
     </style>
     <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
     <script>
@@ -118,7 +141,7 @@
         function addToList(disk, tel, lat, lng) {
 
             infowindow = new google.maps.InfoWindow();
-            console.log(tel + disk)
+            //console.log(tel + disk)
             //const Uluru = { lat: 32.0686992, lng: 34.7751479 };
             const Uluru = { lat: Number(lat), lng: Number(lng) };
             const marker = new google.maps.Marker({
@@ -128,8 +151,8 @@
 
             });
 
-            console.log(marker)
-            console.log("here")
+            //console.log(marker)
+            //console.log("here")
             google.maps.event.addListener(marker, 'click',
                 (function (marker) {
                     return function () {
@@ -137,8 +160,8 @@
                         infowindow.open(map, marker);
                     }
                 })(marker));
-                console.log("here!!!")
-            document.getElementById("addMarker").hidden = !document.getElementById("addMarker").hidden;
+                
+            //document.getElementById("addMarker").hidden = !document.getElementById("addMarker").hidden;
 
             var NewIteamToSave = {
                 name: disk,
@@ -147,22 +170,35 @@
                 lng: Number(lng)
             }
             localStorage.setItem(tel, JSON.stringify(NewIteamToSave))
-
+            console.log("here!!!")
         }
         function readFromLocalStorage() {
 
             var keys = Object.keys(localStorage);
-            console.log(keys);
+            //console.log(keys);
             keys.forEach(key => {
                 var element = JSON.parse(localStorage.getItem(key));
-                console.log(element);
+                //console.log(element);
                 addToList(element.name, element.phone, element.lat, element.lng)
 
             });
 
 
         }
-
+function addDinamicPoint(){
+    map.addListener("click", (mapsMouseEvent) => {
+    // Close the current InfoWindow.
+    infoWindow.close();
+    // Create a new InfoWindow.
+    infoWindow = new google.maps.InfoWindow({
+      position: mapsMouseEvent.latLng,
+    });
+    infoWindow.setContent(
+      JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
+    );
+    infoWindow.open(map);
+  });
+}
     </script>
 </head>
 
@@ -172,7 +208,7 @@
     <div id="map"></div>
 
     <div id="addMarker">
-        <p>Add Marker</p>
+        <label id="headLine">Add Marker</lable>
         <label for="discription">שם מלא</label>
         <input id="discription" type="text">
         <br />
@@ -188,7 +224,7 @@
         <br />
         <br />
         <button
-            onclick="addToList(document.getElementById('discription').value, document.getElementById('phone').value,document.getElementById('lat').value, document.getElementById('lng').value )">הרשם</button>
+           id="addToLIstBotten" onclick="addToList(document.getElementById('discription').value, document.getElementById('phone').value,document.getElementById('lat').value, document.getElementById('lng').value )">הרשם</button>
     </div>
     <button onclick="saveDynamicDataToFile()">save</button>
 
