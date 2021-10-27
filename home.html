@@ -6,7 +6,14 @@
 <script>
     function myFunction() {
         document.getElementById("addMarker").hidden = !document.getElementById("addMarker").hidden;
-
+        document.getElementById("hello").hidden = !document.getElementById("hello").hidden;
+        //hidden=!hidden;
+    }
+    function ToggleMap() {
+        document.getElementById("map").hidden = !document.getElementById("map").hidden;
+        document.getElementById("mapAppear").innerText = document.getElementById("map").hidden ? "הצג מפה" : "סגור מפה";
+        document.getElementById("hello").hidden = !document.getElementById("hello").hidden;
+        //hidden=!hidden;
     }
 
 </script>
@@ -25,28 +32,39 @@
             width: 100%;
             /* The width is the width of the web page */
         }
+
         label {
-            background-color: blue; 
+            background-color: rgb(224, 31, 224);
             font-family: Arial;
             font-weight: bold;
-            color:cornsilk;
+            color: cornsilk;
 
         }
+
         #addMarker {
             width: 50%;
             margin: 0 auto;
             background-color: pink;
 
         }
+
         #addToLIstBotten {
             width: 100%;
             margin: 0 auto;
         }
-        body{
-            background-color: green;  
+
+        body {
+            background-color: rgb(137, 192, 137);
         }
-        h3{
+
+        h3 {
             text-align: center;
+        }
+
+        #head {
+            background-color: rgb(35, 167, 156);
+            width: 50%;
+            margin: 0 auto;
         }
     </style>
     <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
@@ -58,7 +76,16 @@
         function initMap() {
             readFromLocalStorage();
             // The location of Uluru
-            const uluru = { lat: 32.0489407, lng: 34.765728 };
+         
+            const uluru = { lat: 32.087321, lng: 34.7831309 };
+
+            //inbar//
+            const marker1 = new google.maps.Marker({
+                position: uluru,
+                map: map,
+            });
+            //inbar end//
+
             const uluru1 = { lat: 32.0575488, lng: 34.7677758 };
             const uluru2 = { lat: 32.059789, lng: 34.766853 };
             const uluru3 = { lat: 32.0613956, lng: 34.7665389 };
@@ -67,15 +94,17 @@
                 zoom: 15,
                 center: uluru,
             });
+
+
             // The marker, positioned at Uluru
             /*const marker = new google.maps.Marker({
                 position: uluru,
                 map: map,
             });
-
-
+ 
+ 
             infowindow = new google.maps.InfoWindow();
-
+ 
             google.maps.event.addListener(marker, 'click',
                 (function (marker) {
                     return function () {
@@ -83,14 +112,14 @@
                         infowindow.open(map, marker);
                     }
                 })(marker));
-
-
-
+ 
+ 
+ 
             const marker1 = new google.maps.Marker({
                 position: uluru1,
                 map: map,
             });
-
+ 
             google.maps.event.addListener(marker1, 'click',
                 (function (marker1) {
                     return function () {
@@ -98,14 +127,14 @@
                         infowindow.open(map, marker1);
                     }
                 })(marker1));
-
-
-
+ 
+ 
+ 
             const marker2 = new google.maps.Marker({
                 position: uluru2,
                 map: map,
             });
-
+ 
             google.maps.event.addListener(marker2, 'click',
                 (function (marker2) {
                     return function () {
@@ -113,13 +142,13 @@
                         infowindow.open(map, marker2);
                     }
                 })(marker2));
-
-
+ 
+ 
             const marker3 = new google.maps.Marker({
                 position: uluru3,
                 map: map,
             });
-
+ 
             google.maps.event.addListener(marker3, 'click',
                 (function (marker3) {
                     return function () {
@@ -130,6 +159,76 @@
 
         }
 
+        function initAutocomplete() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 31.7962994, lng: 35.2453993 },
+                zoom: 13,
+                mapTypeId: "roadmap",
+            });
+            // Create the search box and link it to the UI element.
+            const input = document.getElementById("pac-input");
+            const searchBox = new google.maps.places.SearchBox(input);
+
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener("bounds_changed", () => {
+                searchBox.setBounds(map.getBounds());
+            });
+
+            let markers = [];
+
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            searchBox.addListener("places_changed", () => {
+                const places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                // Clear out the old markers.
+                markers.forEach((marker) => {
+                    marker.setMap(null);
+                });
+                markers = [];
+
+                // For each place, get the icon, name and location.
+                const bounds = new google.maps.LatLngBounds();
+
+                places.forEach((place) => {
+                    if (!place.geometry || !place.geometry.location) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+
+                    const icon = {
+                        url: place.icon,
+                        size: new google.maps.Size(71, 71),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(17, 34),
+                        scaledSize: new google.maps.Size(25, 25),
+                    };
+
+                    // Create a marker for each place.
+                    markers.push(
+                        new google.maps.Marker({
+                            map,
+                            icon,
+                            title: place.name,
+                            position: place.geometry.location,
+                        })
+                    );
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+        }
+
         function saveDynamicDataToFile() {
 
             var userInput = "MyText";
@@ -138,7 +237,7 @@
             saveAs(blob, "dynamic.txt");
         }
 
-        function addToList(disk, tel, lat, lng) {
+        function addToList(disk, profession, tel, lat, lng) {
 
             infowindow = new google.maps.InfoWindow();
             //console.log(tel + disk)
@@ -147,7 +246,7 @@
             const marker = new google.maps.Marker({
                 position: Uluru,
                 map: map,
-            
+
 
             });
 
@@ -156,11 +255,11 @@
             google.maps.event.addListener(marker, 'click',
                 (function (marker) {
                     return function () {
-                        infowindow.setContent("שם: " + disk + "\n" + "טלפון: " + tel);
+                        infowindow.setContent("שם: " + disk + "\n" + "טלפון: " + tel + "\n" + "מקצוע: "+ profession  );
                         infowindow.open(map, marker);
                     }
                 })(marker));
-                
+
             //document.getElementById("addMarker").hidden = !document.getElementById("addMarker").hidden;
 
             var NewIteamToSave = {
@@ -179,58 +278,80 @@
             keys.forEach(key => {
                 var element = JSON.parse(localStorage.getItem(key));
                 //console.log(element);
-                addToList(element.name, element.phone, element.lat, element.lng)
+                addToList(element.name, element.phone, element.lat, element.lng, element.profession)
 
             });
 
 
         }
-function addDinamicPoint(){
-    map.addListener("click", (mapsMouseEvent) => {
-    // Close the current InfoWindow.
-    infoWindow.close();
-    // Create a new InfoWindow.
-    infoWindow = new google.maps.InfoWindow({
-      position: mapsMouseEvent.latLng,
-    });
-    infoWindow.setContent(
-      JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
-    );
-    infoWindow.open(map);
-  });
-}
+        function addDinamicPoint() {
+            map.addListener("click", (mapsMouseEvent) => {
+                // Close the current InfoWindow.
+                infoWindow.close();
+                // Create a new InfoWindow.
+                infoWindow = new google.maps.InfoWindow({
+                    position: mapsMouseEvent.latLng,
+                });
+                infoWindow.setContent(
+                    JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
+                );
+                infoWindow.open(map);
+            });
+        }
     </script>
 </head>
 
 <body>
-    <h3>My Google Maps Demo</h3>
+    <h3>Privet Teacher Finder</h3>
     <!--The div element for the map -->
-    <div id="map"></div>
+    <div id="map" hidden></div>
+    <input id="pac-input" class="controls" type="text" placeholder="Search Box" />
 
-    <div id="addMarker">
-        <label id="headLine">Add Marker</lable>
-        <label for="discription">שם מלא</label>
-        <input id="discription" type="text">
-        <br />
-        <br />
-        <label for="phone">טלפון</label>
-        <input id="phone" type="tel">
-        <br />
-        <br />
-        <label for="lat">lat</label>
-        <input id="lat" type="number">
-        <label for="lng">lng</label>
-        <input id="lng" type="number">
-        <br />
-        <br />
-        <button
-           id="addToLIstBotten" onclick="addToList(document.getElementById('discription').value, document.getElementById('phone').value,document.getElementById('lat').value, document.getElementById('lng').value )">הרשם</button>
+
+    <div id="addMarker" hidden>
+        <label id="headLine"></lable>
+            <label for="discription">שם מלא</label>
+            <input id="discription" type="text">
+            <br />
+            <br />
+            <label for="profession">מקצוע</label>
+            <input id="profession" type="text">
+            <br />
+            <br />
+            <label for="phone">טלפון</label>
+            <input id="phone" type="tel">
+            <br />
+            <br />
+            <label for="lat">lat</label>
+            <input id="lat" type="number">
+            <label for="lng">lng</label>
+            <input id="lng" type="number">
+            <br />
+            <br />
+            <button id="addToLIstBotten"
+                onclick="addToList(document.getElementById('discription').value, document.getElementById('phone').value,document.getElementById('lat').value, document.getElementById('lng').value )">הרשם</button>
     </div>
+
+ 
+
+    <div id="wellcomeDiv">
+        <div id="hello">
+            <h2 id="head">-------------------------------שלום אורח-------------------------------</h2>
+            <h3>מה תרצה לעשות באתר?</h3>
+        </div>
+        <button id="mapAppear" onclick="ToggleMap()">לחפש</button>
+        <button onclick="myFunction()">רוצה להציע שירות</button>
+    </div>
+
+
+  
+
     <button onclick="saveDynamicDataToFile()">save</button>
 
     <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
     <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQK4PcNKZtRDbOuNCJuR3X47xgMQvBrpQ&callback=initMap&libraries=&v=weekly"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQK4PcNKZtRDbOuNCJuR3X47xgMQvBrpQ&callback=initAutocomplete&libraries=places&v=weekly
+        "
         async></script>
 </body>
 
